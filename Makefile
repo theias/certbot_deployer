@@ -23,6 +23,8 @@ $(DEPENDENCIES): $(VENV) requirements-make.txt requirements.txt
 	./venv/bin/python3 -m pip install --requirement requirements-make.txt
 	./venv/bin/python3 -m pip install --requirement requirements.txt
 	touch $(DEPENDENCIES)
+.PHONY: dependencies
+dependencies: $(DEPENDENCIES)
 
 $(STATIC_BLACK): $(PYTHON_FILES) $(DEPENDENCIES)
 	# Check style

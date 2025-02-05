@@ -1,0 +1,102 @@
+"""
+Base classes
+"""
+
+import argparse
+from abc import abstractmethod
+from typing import Any, Callable, ClassVar, Iterable
+from taskflow.task import Task # type:ignore
+from taskflow import engines  # type:ignore
+from taskflow.patterns import linear_flow  # type:ignore
+
+# pylint: disable-next=too-few-public-methods
+class LiveCertificate:
+    """
+    The "Certificate" i.e. the collection of files produced by Certbot and the
+    metadata therefor
+    """
+
+    def __init__(self, *, local_dirpath: str, name: Optional[str] = None) -> None:
+        self.cert_filepath: str = os.path.join(local_dirpath, CERT)
+        self.key_filepath: str = os.path.join(local_dirpath, KEY)
+        self.intermediates_filepath: str = os.path.join(local_dirpath, INTERMEDIATES)
+        self.fullchain_filepath: str = os.path.join(local_dirpath, FULLCHAIN)
+        try:
+            logging.debug("Reading data from cert file `%s`...", local_dirpath)
+            with open(f"{local_dirpath}/cert.pem", "r", encoding="utf-8") as certfile:
+                certdata: x509.Certificate = x509.load_pem_x509_certificate(
+                    str.encode(certfile.read())
+                )
+        except FileNotFoundError:
+            logging.error("Unable to find `cert.pem`")
+            raise
+        expires: str
+        try:
+            # We are still supporting Python 3.6 and this supporting old
+            # `cryptography` version
+            # `not_valid_after_utc` only present where `cryptography>=42.0.0`
+            expires = certdata.not_valid_after_utc.isoformat()  # type:ignore
+        except AttributeError:
+            expires = certdata.not_valid_after.isoformat()
+        self.fingerprint: str = self._fingerprint(certdata)
+        common_name: str
+        try:
+            # Try for Common Name
+            common_name = str(
+                certdata.subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value
+            )
+        except IndexError:
+            # Else try to first sub alt name
+            common_name = str(
+                certdata.subject.get_attributes_for_oid(
+                    ExtensionOID.SUBJECT_ALTERNATIVE_NAME
+                )[0].value
+            )
+        self.name = f"{common_name}.{expires}" if name is None else name
+        logging.debug("Live cert initialized as: `%s`", str(self))
+
+    def __str__(self) -> str:
+        """represent self"""
+        return str(vars(self))
+
+class Deployer:
+    """
+    Base deployer to be inherited
+    """
+
+    subcommand: ClassVar[str]
+
+    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
+        super().__init_subclass__(*args, **kwargs)
+        cls.flow: linear_flow.Flow = linear_flow.Flow(cls.subcommand)  # type:ignore
+
+    @staticmethod
+    @abstractmethod
+    def register_args(*, parser: argparse.ArgumentParser) -> None:
+        """
+        For child objects
+        To register their own subcommand and subsequent options
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_workflow(self) -> Iterable[Task]:
+        """
+        For child objects
+        To return an interable full of `Task` objects to run
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    def argparse_post(*, args: argparse.Namespace) -> None:
+        """
+        Optionally validate/modify the arguments namespace object after parsing
+        """
+
+    @staticmethod
+    @abstractmethod
+    def run(*, args: argparse.Namespace) -> None:
+        """
+        Entry point for executing task list
+        """
+        raise NotImplementedError

@@ -9,3 +9,6 @@ build/
 dist/
 dist*/
 venv/
+certs/*
+!certs/.keep
+docs_output/

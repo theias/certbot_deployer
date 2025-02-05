@@ -1,0 +1,3 @@
+cryptography==40.0.2
+fabric>=3.2.2,<4.0.0
+taskflow==4.7.0
