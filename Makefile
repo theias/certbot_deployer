@@ -42,6 +42,14 @@ $(STATIC_PYLINT): $(PYTHON_FILES) $(DEPENDENCIES)
 static-analysis: $(DEPENDENCIES) $(STATIC_PYLINT) $(STATIC_MYPY) $(STATIC_BLACK)
 	# Hooray all good
 
+.PHONY: docs
+docs: $(DEPENDENCIES)
+	mkdocs build
+
+.PHONY: docs-serve
+docs-serve: $(DEPENDENCIES)
+	mkdocs serve
+
 .PHONY: test
 test: $(DEPENDENCIES)
 	./venv/bin/pytest tests/
