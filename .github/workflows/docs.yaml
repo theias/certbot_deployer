@@ -1,23 +1,15 @@
 ---
-name: Deploy static docs to pages
+name: CI and Docs Deployment
 
 on:  # yamllint disable-line rule:truthy
   push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run
-# in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production
-# deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -39,17 +31,17 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-      - name: Make all
-        run: |
-          # Manages own dependencies
-          make all
+      - name: Run tests with 'make all'
+        run: make all
+
   publish_docs_to_pages:
+    if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v4
