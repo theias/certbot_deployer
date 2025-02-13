@@ -48,9 +48,8 @@ KEY_FILENAME = "privkey.pem"
 
 # pylint: disable-next=too-few-public-methods
 class CertificateComponent:
+    # pylint: disable=line-too-long
     """
-    (Honestly should be @dataclass except we are supporting Python 3.6)
-
     Represents a single component of a certificate bundle.
 
     A `CertificateComponent` is an abstraction for individual parts of a certificate
@@ -59,11 +58,11 @@ class CertificateComponent:
     or transferred independently.
 
     Attributes:
-        label (str): A human-readable label for the component, one of `["cert",
-        "privkey", "fullchain", "intermediates"]`
+        label (str): A human-readable label for the component, one of `["cert", "privkey", "fullchain", "intermediates"]`
         path (str): The path to the component file on the local filesystem.
         filename (str): The name of the component's file on the local filesystem
     """
+    # pylint: enable=line-too-long
 
     def __init__(self, path: str, filename: str, label: str) -> None:
         self.path = path
