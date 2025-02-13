@@ -53,13 +53,23 @@ class ExampleDeployer(Deployer):
         print("Executing deployment with message:", args.message)
 ```
 
-With the above installed in the same environment as this tool, the new deployer
-can be used as follows:
+And with the following in your plugin's `setup.cfg`:
+
+```
+[options.entry_points]
+certbot_deployer.plugins =
+    example = certbot_deployer_example:ExampleDeployer
+
+```
+
+The plugin can be installed into the same environment as this tool, and the new
+deployer can be called as follows:
 
 ```
 $ certbot_deployer example --message "Hello, World!"
 Executing deployment with message: Hello, World!
 ```
+
 
 """
 import argparse
