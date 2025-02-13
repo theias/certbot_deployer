@@ -1,5 +1,5 @@
 ---
-site_name: My Docs
+site_name: Certbot Deployer
 site_dir: docs_output
 plugins:
   - mkdocstrings:
