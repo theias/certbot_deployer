@@ -72,6 +72,7 @@ class CertificateComponent:
 
 # pylint: disable-next=too-many-instance-attributes
 class CertificateBundle:
+    # pylint: disable=line-too-long
     """
     Represents a certificate bundle produced by Certbot.
 
@@ -91,14 +92,13 @@ class CertificateBundle:
         `intermediates` (CertificateComponent): The intermediate certificates component.
         `key` (CertificateComponent): The private key component.
         `fullchain` (CertificateComponent): The full certificate chain component.
-        `components` (Dict[str, CertificateComponent]): Dictionary mapping component
-            labels to their corresponding CertificateComponent.
+        `components` (Dict[str, CertificateComponent]): Dictionary mapping component labels to their corresponding CertificateComponent.
         `certdata` (x509.Certificate): The parsed x509 certificate from the cert file.
-        `expires` (str): The expiration date (Not After) of the certificate in
-            ISO8601 format with seconds precision
+        `expires` (str): The expiration date (Not After) of the certificate in ISO8601 format with seconds precision
         `common_name` (str): The common name extracted from the certificate (falls back
             to a subject alternative name if not present).
     """
+    # pylint: enable=line-too-long
 
     def __init__(self, *, path: str) -> None:
         """
@@ -170,13 +170,14 @@ class CertificateBundle:
         logging.debug("Live cert initialized as: `%s`", str(self))
 
     def keys(self) -> List[str]:
+        # pylint: disable=line-too-long
         """
         Get a list of certificate component labels.
 
             Returns:
-                List[str]: The labels of the certificate components (e.g.,
-            `["cert", "intermediates", "fullchain", "privkey"]`).
+                List[str]: The labels of the certificate components (e.g., `["cert", "intermediates", "fullchain", "privkey"]`).
         """
+        # pylint: enable=line-too-long
         return list(self.components.keys())
 
     def __getitem__(self, key: str) -> CertificateComponent:
@@ -203,7 +204,8 @@ class CertificateBundle:
 
 
 class Deployer:
-    """
+    # pylint: disable=line-too-long
+    """dis
     Abstract base class for deployer plugins.
 
     Plugin developers should subclass Deployer to implement their custom
@@ -212,8 +214,7 @@ class Deployer:
     Each deployer plugin must define:
 
       - A class attribute `subcommand` used to identify the plugin.
-      - The static method `register_args(*, parser: argparse.ArgumentParser)`
-        to add subcommand-specific arguments.
+      - The static method `register_args(*, parser: argparse.ArgumentParser)` to add subcommand-specific arguments.
       - The static method `entrypoint(*, args: argparse.Namespace)` that
         defines the main execution logic.
 
@@ -240,6 +241,7 @@ class Deployer:
     Optionally, plugins can override `argparse_post(*, args: argparse.Namespace)` for
     post-processing of parsed arguments.
     """
+    # pylint: enable=line-too-long
 
     subcommand: ClassVar[str]
 
@@ -302,6 +304,7 @@ class Deployer:
     def entrypoint(
         *, args: argparse.Namespace, certificate_bundle: CertificateBundle
     ) -> None:
+        # pylint: disable=line-too-long
         """
         Execute the deployment process.
 
@@ -315,14 +318,11 @@ class Deployer:
         or processing of the certificates as required by their specific use-case.
 
         Args:
-            args (argparse.Namespace): The namespace containing the parsed
-                command-line arguments.
-            certificate_bundle (CertificateBundle): The certificate bundle,
-                built from the directory specified by the environment variable
-                (or argument) `RENEWED_LINEAGE`, containing the certificate,
-                key, full chain, and intermediate certificates.
+            args (argparse.Namespace): The namespace containing the parsed command-line arguments.
+            certificate_bundle (CertificateBundle): The certificate bundle, built from the directory specified by the environment variable (or argument) `RENEWED_LINEAGE`, containing the certificate, key, full chain, and intermediate certificates.
 
         Returns:
         None
         """
+        # pylint: enable=line-too-long
         raise NotImplementedError

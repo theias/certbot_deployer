@@ -127,6 +127,7 @@ class DeployerPluginConflict(Exception):
 def parse_args(
     argv: Optional[list] = None, deployers: Optional[List[Type[Deployer]]] = None
 ) -> argparse.Namespace:
+    # pylint: disable=line-too-long
     """
     Parse command-line arguments and set up deployer subcommands.
 
@@ -136,11 +137,8 @@ def parse_args(
     flag.
 
     Args:
-        argv (Optional[list]): The list of command-line arguments. Defaults
-            to an empty list (which triggers help output) if None.
-        deployers (Optional[List[Type[Deployer]]]): A list of deployer plugin classes.
-            Each plugin must define a unique `subcommand` and implement the required
-            interface. If not provided, the framework may warn that no subcommands are available.
+        argv (Optional[list]): The list of command-line arguments. Defaults to an empty list (which triggers help output) if None.
+        deployers (Optional[List[Type[Deployer]]]): A list of deployer plugin classes. Each plugin must define a unique `subcommand` and implement the required interface. If not provided, the framework may warn that no subcommands are available.
 
     Returns:
         argparse.Namespace: The namespace containing the parsed arguments.
@@ -149,6 +147,7 @@ def parse_args(
         DeployerPluginConflict: If two or more deployer plugins share the same subcommand.
         SystemExit: If no command-line arguments are provided (help is printed and execution exits).
     """
+    # pylint: enable=line-too-long
     argv = [] if argv is None else argv
     deployers = [] if deployers is None else deployers
 
@@ -232,6 +231,7 @@ def main(
     argv: list = sys.argv[1:],
     discovered_deployers: Optional[List[Type[Deployer]]] = None,
 ) -> None:
+    # pylint: disable=line-too-long
     """
     Main entry point of the certbot deploy hook framework.
 
@@ -245,18 +245,16 @@ def main(
     accepts the parsed arguments and the pre-created `CertificateBundle`.
 
     Args:
-        argv (list): The list of command-line arguments (excluding the program name).
-            Defaults to `sys.argv[1:]`.
-        discovered_deployers (Optional[List[Type[Deployer]]]): A list of deployer plugin
-            classes.
+        argv (list): The list of command-line arguments (excluding the program name). Defaults to `sys.argv[1:]`.
+        discovered_deployers (Optional[List[Type[Deployer]]]): A list of deployer plugin classes.
 
     Returns:
         None
 
     Raises:
-        argparse.ArgumentTypeError: If the `renewed_lineage` path is not provided
-            via the environment variable or command-line arguments.
+        argparse.ArgumentTypeError: If the `renewed_lineage` path is not provided via the environment variable or command-line arguments.
     """
+    # pylint: enable=line-too-long
     discovered_deployers = (
         discovered_deployers
         if discovered_deployers is not None
