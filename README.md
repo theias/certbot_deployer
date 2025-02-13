@@ -58,6 +58,8 @@ Certbot can also be configured to run specific hook commands on specific certifi
 
 # Plugin development
 
+(For reference: [Certbot Deployer plugin development technical reference])
+
 Certbot Deployer is a framework that delegates certificate deployment tasks to deployer plugins - it effectively does nothing without any plugins.
 
 These plugins are created by subclassing the abstract `Deployer` class, which defines the public interface for implementing custom deployment logic.
@@ -124,6 +126,8 @@ $ certbot_deployer example --message "Hello, World!"
 Executing deployment with message: Hello, World!
 ```
 
+See also: [Certbot Deployer plugin development technical reference]
+
 # Contributing
 
 Merge requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
@@ -143,6 +147,7 @@ License :: OSI Approved :: MIT License
 
 
 [Certbot Configuration File]: https://eff-certbot.readthedocs.io/en/stable/using.html#configuration-file
+[Certbot Deployer plugin development technical reference]: https://theias.github.io/certbot_deployer/
 [Certbot User Guide]: https://eff-certbot.readthedocs.io/en/stable/using.html
 [Certbot]: https://certbot.eff.org/
 [pip]: https://pip.pypa.io/en/stable/
