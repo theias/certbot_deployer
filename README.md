@@ -54,7 +54,7 @@ If all of the certificates managed by Certbot are being deployed with the same d
 certbot renew --deploy-hook "certbot-deployer pluginname --pluginarg1 --pluginarg2"
 ```
 
-Certbot can also be configured to run specific hook commands on specific certificates in `{$certbot_dir}/renewal/sub.domain.tld.conf`. See [Certbot Configuration File] for more on this.
+Certbot can also be configured to run specific hook commands on specific certificates in `${certbot_dir}/renewal/sub.domain.tld.conf`. See [Certbot Configuration File] for more on this.
 
 # Plugin development
 
