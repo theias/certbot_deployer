@@ -84,7 +84,7 @@ try:
     from importlib.metadata import entry_points, EntryPoints
 except ImportError:
     # For older Python versions, use the backport package
-    from importlib_metadata import entry_points, EntryPoints # type:ignore
+    from importlib_metadata import entry_points, EntryPoints  # type:ignore
 
 
 def load_deployer_plugins() -> List[Type[Deployer]]:
