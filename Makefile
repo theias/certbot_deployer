@@ -44,11 +44,11 @@ static-analysis: $(DEPENDENCIES) $(STATIC_PYLINT) $(STATIC_MYPY) $(STATIC_BLACK)
 
 .PHONY: docs
 docs: $(DEPENDENCIES)
-	mkdocs build
+	./venv/bin/mkdocs build
 
 .PHONY: docs-serve
 docs-serve: $(DEPENDENCIES)
-	mkdocs serve
+	./venv/bin/mkdocs serve
 
 .PHONY: test
 test: $(DEPENDENCIES)
