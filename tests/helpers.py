@@ -13,10 +13,11 @@ COMMON_NAME: str = "test common name"
 NOT_VALID_BEFORE: datetime = datetime(2020, 1, 1)
 NOT_VALID_AFTER: datetime = datetime(2099, 1, 1)
 
+
 def generate_self_signed_cert(
     common_name: str = COMMON_NAME,
     not_valid_before: datetime = NOT_VALID_BEFORE,
-    not_valid_after: datetime = NOT_VALID_AFTER
+    not_valid_after: datetime = NOT_VALID_AFTER,
 ) -> str:
     """
     Generate a self-signed certificate in PEM format for testing.
