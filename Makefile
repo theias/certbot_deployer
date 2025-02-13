@@ -20,6 +20,7 @@ $(VENV):
 	touch $(VENV)
 $(DEPENDENCIES): $(VENV) requirements-make.txt requirements.txt
 	# Install Python dependencies, runtime *and* test/build
+	./venv/bin/pip3 install --upgrade pip
 	./venv/bin/python3 -m pip install --requirement requirements-make.txt
 	./venv/bin/python3 -m pip install --requirement requirements.txt
 	touch $(DEPENDENCIES)
