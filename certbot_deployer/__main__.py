@@ -77,7 +77,7 @@ import logging
 import os
 import sys
 from typing import List, Optional, Type
-from deployer import Deployer, CertificateBundle
+from certbot_deployer.deployer import Deployer, CertificateBundle
 
 try:
     # for Python 3.8+

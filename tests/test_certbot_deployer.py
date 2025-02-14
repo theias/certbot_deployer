@@ -13,8 +13,8 @@ from typing import ClassVar, List, Dict
 import pytest
 
 from certbot_deployer.__main__ import main, parse_args, DeployerPluginConflict
-from deployer import Deployer, CertificateBundle
-from deployer import CERT_FILENAME
+from certbot_deployer.deployer import Deployer, CertificateBundle
+from certbot_deployer.deployer import CERT_FILENAME
 from .helpers import generate_self_signed_cert
 
 
