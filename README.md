@@ -14,7 +14,7 @@ You can install with [pip]:
 
 ```sh
 python3 -m pip install certbot_deployer
-# Also install any needed plugins, or the tool will effetively do nothing
+# Also install any needed plugins, or the tool will effectively do nothing
 # python3 -m pip install certbot_deployer_<someplugin>
 ```
 
