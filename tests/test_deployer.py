@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from deployer import CertificateBundle, Deployer
-from deployer import (
+from certbot_deployer.deployer import CertificateBundle, Deployer
+from certbot_deployer.deployer import (
     CERT,
     CERT_FILENAME,
     FULLCHAIN,
