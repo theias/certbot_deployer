@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-if [[ "$(git branch --show-current)" == "main" ]]; then
+if [[ "$(git branch --show-current)" != "main" ]]; then
   exit 0
 fi
 
