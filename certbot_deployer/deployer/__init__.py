@@ -96,13 +96,21 @@ with warnings.catch_warnings():
 
 # We assume the directory structure and filenames created by Certbot
 CERT = "cert"
+""" The base name used by Certbot for the "cert only" certificate file """
 CERT_FILENAME = "cert.pem"
+""" The full filename used by Certbot for the "cert only" certificate file """
 FULLCHAIN = "fullchain"
+""" The base name used by Certbot for the "full chain" certificate file """
 FULLCHAIN_FILENAME = "fullchain.pem"
+""" The full filename used by Certbot for the "full chain" certificate file """
 INTERMEDIATES = "intermediates"
+""" The base name used by Certbot for the "intermediates-only" certificate file """
 INTERMEDIATES_FILENAME = "intermediates.pem"
+""" The full filename used by Certbot for the "intermediates-only" certificate file """
 KEY = "privkey"
+""" The base name used by Certbot for the "key" certificate file """
 KEY_FILENAME = "privkey.pem"
+""" The full filename used by Certbot for the "key" certificate file """
 
 
 # pylint: disable-next=too-few-public-methods

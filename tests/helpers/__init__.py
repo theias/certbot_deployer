@@ -10,8 +10,11 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 
 COMMON_NAME: str = "test common name"
+""" Common name used by `generate_self_signed_cert` if not overridden """
 NOT_VALID_BEFORE: datetime = datetime(2020, 1, 1)
+""" NOT_VALID_BEFORE value used by `generate_self_signed_cert` if not overridden """
 NOT_VALID_AFTER: datetime = datetime(2099, 1, 1)
+""" NOT_VALID_AFTER value used by `generate_self_signed_cert` if not overridden """
 
 
 def generate_self_signed_cert(
