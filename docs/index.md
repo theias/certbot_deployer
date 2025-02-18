@@ -1,13 +1,17 @@
-# Certbot Deployer framework
+Certbot Deployer framework
+==========
 
 [Certbot Deployer project repository]
 
-::: certbot_deployer.__main__
+# Deployer
+
+::: certbot_deployer.deployer
     options:
       show_source: true
 
+# test_helpers
 
-::: deployer
+::: tests.helpers
     options:
       show_source: true
 

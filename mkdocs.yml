@@ -9,6 +9,4 @@ plugins:
           options:
             show_private_members: false
             filters:
-              # This regex filter will exclude members named `main`
-              # even if they don’t start with an underscore.
-              - '^(?!(main|parse_args|__.*__)$).*'
+              - '^(?!(main|parse_args|_.*|__.*__)$).*'
