@@ -201,7 +201,7 @@ class CertificateBundle:
 
 class Deployer:
     # pylint: disable=line-too-long
-    """dis
+    """
     Abstract base class for deployer plugins.
 
     Plugin developers should subclass Deployer to implement their custom
