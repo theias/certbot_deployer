@@ -1,6 +1,11 @@
 certbot_deployer
 ===========
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/theias/certbot_deployer/refs/heads/main/docs/logo.png" />
+</p>
+
+
 Certbot Deployer is a pluggable deploy hook framework for [Certbot] that streamlines the process of deploying certificates managed by Certbot.
 
 The `certbot_deployer` package supports two primary use cases:
