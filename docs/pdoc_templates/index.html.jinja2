@@ -1,0 +1,30 @@
+{% extends "default/index.html.jinja2" %}
+
+{% block title %}Certbot Deployer{% endblock %}
+
+{% block nav %}
+    <img src="https://raw.githubusercontent.com/theias/certbot_deployer/refs/heads/main/docs/logo.png" class="logo" alt="project logo"/>
+    <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
+                   pattern=".+" required>
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+    <main class="pdoc">
+
+    {% filter to_html %}
+# Certbot Deployer
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/theias/certbot_deployer/refs/heads/main/docs/logo.png" />
+</p>
+
+## Available Modules
+
+* [certbot_deployer.deployer](http://localhost:8080/certbot_deployer/deployer.html)
+* [certbot_deployer.test_helpers](http://localhost:8080/tests/helpers.html)
+    {% endfilter %}
+
+    </main>
+    {% include "search.html.jinja2" %}
+{% endblock %}
