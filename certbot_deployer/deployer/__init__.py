@@ -214,12 +214,9 @@ class CertificateBundle:
                 )
         except FileNotFoundError as err:
             raise RuntimeError(f"Unable to find `{CERT_FILENAME}`") from err
-        self.expires: str
-        try:
-            # Where `cryptography>=42.0.0`, use not_valid_after_utc attribute
-            self.expires = self.certdata.not_valid_after_utc.isoformat()  # type:ignore
-        except AttributeError:
-            self.expires = self.certdata.not_valid_after.isoformat()
+        self.expires: str = self.certdata.not_valid_after_utc.strftime(
+            "%Y-%m-%dT%H:%M:%S"
+        )
         self.common_name: str
         try:
             # Try for Common Name which is not required to be present

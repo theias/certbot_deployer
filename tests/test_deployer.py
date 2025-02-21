@@ -78,7 +78,7 @@ def test_certificate_bundle_expires_and_common_name(tmp_path: Path) -> None:
     (tmp_path / CERT_FILENAME).write_text(cert_pem, encoding="utf-8")
 
     bundle: CertificateBundle = CertificateBundle(path=str(tmp_path))
-    expected_expires: str = NOT_VALID_AFTER.isoformat()
+    expected_expires: str = NOT_VALID_AFTER.strftime("%Y-%m-%dT%H:%M:%S")
 
     assert bundle.expires == expected_expires
     assert bundle.common_name == COMMON_NAME
