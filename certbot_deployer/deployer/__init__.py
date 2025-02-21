@@ -181,6 +181,7 @@ class CertificateBundle:
         Raises:
             RuntimeError: If the primary certificate file (`cert.pem`) cannot be found.
         """
+        self.path: str = path
         self.cert: CertificateComponent = CertificateComponent(
             label=CERT, filename=CERT_FILENAME, path=os.path.join(path, CERT_FILENAME)
         )
