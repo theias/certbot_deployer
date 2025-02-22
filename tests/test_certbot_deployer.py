@@ -86,7 +86,7 @@ def test_exit_no_arguments() -> None:
 def test_main_delegates(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     """
     Test that main() correctly delegates to the deployer plugin's entrypoint.
-    To do this, we override the discovered_deployers in `main` with our dummy
+    To do this, we override the deployers in `main` with our dummy
     and patch DummyDeployer.entrypoint to record the call.
     """
 
@@ -119,7 +119,7 @@ def test_main_delegates(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None
     monkeypatch.setenv("RENEWED_LINEAGE", str(tmp_path))
 
     argv: List[str] = ["-v", "dummy", "--dummy-arg", "bar"]
-    main(argv=argv, discovered_deployers=[DummyDeployer])
+    main(argv=argv, deployers=[DummyDeployer])
 
     # Verify that our fake entrypoint was executed.
     assert called

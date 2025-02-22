@@ -163,7 +163,7 @@ def parse_args(
 
 def main(
     argv: list = sys.argv[1:],
-    discovered_deployers: Optional[List[Type[Deployer]]] = None,
+    deployers: Optional[List[Type[Deployer]]] = None,
 ) -> None:
     # pylint: disable=line-too-long
     """
@@ -180,7 +180,7 @@ def main(
 
     Args:
         argv (list): The list of command-line arguments (excluding the program name). Defaults to `sys.argv[1:]`.
-        discovered_deployers (Optional[List[Type[Deployer]]]): A list of deployer plugin classes.
+        deployers (Optional[List[Type[Deployer]]]): A list of deployer plugin classes.
 
     Returns:
         None
@@ -189,12 +189,12 @@ def main(
         argparse.ArgumentTypeError: If the `renewed_lineage` path is not provided via the environment variable or command-line arguments.
     """
     # pylint: enable=line-too-long
-    discovered_deployers = (
-        discovered_deployers
-        if discovered_deployers is not None
+    deployers = (
+        deployers
+        if deployers is not None
         else load_deployer_plugins()
     )
-    args = parse_args(argv, deployers=discovered_deployers)
+    args = parse_args(argv, deployers=deployers)
     logging.debug("Argparse results: %s", args)
     certificate_bundle: CertificateBundle = CertificateBundle(path=args.renewed_lineage)
     args.entrypoint(args=args, certificate_bundle=certificate_bundle)
