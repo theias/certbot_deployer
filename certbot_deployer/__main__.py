@@ -11,7 +11,11 @@ import logging
 import os
 import sys
 from typing import List, Optional, Type
-from certbot_deployer.deployer import Deployer, CertificateBundle
+from certbot_deployer.deployer import (
+    Deployer,
+    CertificateBundle,
+    DeployerPluginConflict,
+)
 
 try:
     # for Python 3.8+
@@ -47,15 +51,6 @@ def load_deployer_plugins() -> List[Type[Deployer]]:
         plugin_class = entry_point.load()
         plugins.append(plugin_class)
     return plugins
-
-
-class DeployerPluginConflict(Exception):
-    """
-    Exception raised when there is a conflict between deployer plugins.
-
-    This typically occurs when two plugins attempt to register the same subcommand,
-    which would otherwise lead to ambiguity in the command-line interface.
-    """
 
 
 def parse_args(
@@ -189,11 +184,7 @@ def main(
         argparse.ArgumentTypeError: If the `renewed_lineage` path is not provided via the environment variable or command-line arguments.
     """
     # pylint: enable=line-too-long
-    deployers = (
-        deployers
-        if deployers is not None
-        else load_deployer_plugins()
-    )
+    deployers = deployers if deployers is not None else load_deployer_plugins()
     args = parse_args(argv, deployers=deployers)
     logging.debug("Argparse results: %s", args)
     certificate_bundle: CertificateBundle = CertificateBundle(path=args.renewed_lineage)

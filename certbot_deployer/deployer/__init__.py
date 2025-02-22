@@ -114,6 +114,15 @@ KEY_FILENAME = "privkey.pem"
 """ The full filename used by Certbot for the "key" certificate file """
 
 
+class DeployerPluginConflict(Exception):
+    """
+    Exception raised when there is a conflict between deployer plugins.
+
+    This typically occurs when two plugins attempt to register the same subcommand,
+    which would otherwise lead to ambiguity in the command-line interface.
+    """
+
+
 # pylint: disable-next=too-few-public-methods
 class CertificateComponent:
     # pylint: disable=line-too-long
