@@ -55,7 +55,8 @@ class ExampleDeployer(Deployer):
         print("Executing deployment with message:", args.message)
 ```
 
-And with the following in your plugin's `setup.cfg`:
+And with the following to include a `certbot_deployer.plugins` entry point in
+your plugin's `setup.cfg`:
 
 ```
 [options.entry_points]
