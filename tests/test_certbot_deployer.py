@@ -12,7 +12,7 @@ from typing import ClassVar, List, Dict
 
 import pytest
 
-from certbot_deployer.__main__  import parse_args
+from certbot_deployer.__main__ import parse_args
 from certbot_deployer import main, DeployerPluginConflict
 from certbot_deployer.deployer import Deployer, CertificateBundle
 from certbot_deployer.deployer import CERT_FILENAME
