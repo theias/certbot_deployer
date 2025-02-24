@@ -16,6 +16,7 @@ from certbot_deployer.deployer import (
     CertificateBundle,
     DeployerPluginConflict,
 )
+from . import __prog__
 
 try:
     # for Python 3.8+
@@ -93,6 +94,7 @@ def parse_args(
     parser = argparse.ArgumentParser(
         description=descr,
         epilog=epilog,
+        prog=__prog__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
