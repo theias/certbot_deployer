@@ -10,7 +10,7 @@ Certbot Deployer is a pluggable deploy hook framework for [Certbot] that streaml
 
 The `certbot_deployer` package supports two primary use cases:
 
-* Command-line usage: `certbot_deployer` is intended to be run as a deploy hook launched by Certbot in order to deploy the certificates to arbitrary endpoints e.g. appliances, external machines, etc.
+* Command-line usage: `certbot-deployer` is intended to be run as a deploy hook launched by Certbot in order to deploy the certificates to arbitrary endpoints e.g. appliances, external machines, etc.
 * Plugin development: the library interface is used to build custom deployment plugins
 
 # Installation
@@ -36,7 +36,7 @@ Certbot Deployer depends on plugins to actually do any work. Refer to the docume
 
 ```sh
 # Note that the environment variable RENEWED_LINEAGE must be present for
-# Certbot Deployer to work(it is automatically provided by Certbot when launching
+# Certbot Deployer to work (it is automatically provided by Certbot when launching
 # deploy hooks)
 certbot-deployer  pluginname --pluginarg1 --pluginarg2
 ```

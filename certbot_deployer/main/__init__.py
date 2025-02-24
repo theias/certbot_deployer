@@ -18,7 +18,8 @@ from certbot_deployer.deployer import (
     CertificateBundle,
     DeployerPluginConflict,
 )
-from .. import __prog__
+
+from certbot_deployer.meta import __prog__
 
 
 def load_deployer_plugins() -> List[Type[Deployer]]:

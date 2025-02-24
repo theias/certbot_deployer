@@ -12,8 +12,8 @@ from typing import ClassVar, List, Dict
 
 import pytest
 
-from certbot_deployer.main import parse_args
-from certbot_deployer import main, DeployerPluginConflict
+from certbot_deployer.main import parse_args, main
+from certbot_deployer import DeployerPluginConflict
 from certbot_deployer.deployer import Deployer, CertificateBundle
 from certbot_deployer.deployer import CERT_FILENAME
 from .helpers import generate_self_signed_cert
