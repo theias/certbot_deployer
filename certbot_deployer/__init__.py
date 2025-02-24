@@ -6,5 +6,5 @@ __title__ = "certbot_deployer"
 __prog__ = "certbot-deployer"
 __license__ = "License :: OSI Approved :: MIT License"
 
-from .__main__ import main
+from .main import main
 from .deployer import *
