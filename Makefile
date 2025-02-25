@@ -111,9 +111,12 @@ $(BUILD): $(DEPENDENCIES)
 		exit 1; \
 		fi
 	mkdir --parents $(BUILD_DIR)
+	mkdir --parents $(BUILD_DIR).meta
 	ln -f -s $(BUILD_DIR) release
+	ln -f -s $(BUILD_DIR).meta release.meta
+	@cat README.md <(tail -n+1 CHANGELOG.md LICENSE) > release.meta/long_description.md
 	./venv/bin/python3 -m build --outdir $(BUILD_DIR)
-	./venv/bin/kacl-cli get "$(VERSION)" > $(BUILD_DIR)/CHANGELOG.md
+	./venv/bin/kacl-cli get "$(VERSION)" > release.meta/CHANGELOG.md
 	touch $(BUILD)
 
 .PHONY: tag
@@ -148,6 +151,7 @@ confirm-hooks:
 clean:
 	# Cleaning everything but the `venv`
 	rm -rf ./dist_*
+	rm -rf ./release*
 	rm -rf ./certbot_deployer.egg-info/
 	rm -rf ./.mypy_cache
 	rm -rf ./.pytest_cache
