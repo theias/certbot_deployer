@@ -110,7 +110,9 @@ $(BUILD): $(DEPENDENCIES)
 		exit 1; \
 		fi
 	mkdir --parents $(BUILD_DIR)
+	ln -s $(BUILD_DIR) release
 	./venv/bin/python3 -m build --outdir $(BUILD_DIR)
+	./venv/bin/kacl-cli get "$(VERSION)" > $(BUILD_DIR)/CHANGELOG.md
 	touch $(BUILD)
 
 .PHONY: publish
