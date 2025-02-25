@@ -6,13 +6,14 @@ STATIC_MYPY := venv/mypy.timestamp
 PYTHON_FILES := $(shell find . -path ./venv -prune -o -name '*.py' -print)
 PACKAGE := certbot_deployer
 VENV := venv/venv.timestamp
-VERSION := $(shell python3 -c 'from certbot_deployer.meta import __version__; print(__version__)')
+VERSION := $(shell python3 -c 'meta_namespace = {}; f = open("certbot_deployer/meta.py", "r", encoding="utf-8"); exec(f.read(), meta_namespace); f.close(); print(meta_namespace.get("__version__"))')
 BUILD_DIR := dist_$(VERSION)
 BUILD := $(BUILD_DIR)/.build.timestamp
 _WARN := "\033[33m[%s]\033[0m %s\n"  # Yellow text for "printf"
 _TITLE := "\033[32m[%s]\033[0m %s\n" # Green text for "printf"
 _ERROR := "\033[31m[%s]\033[0m %s\n" # Red text for "printf"
 
+# all: static-analysis test
 all: static-analysis test
 
 $(VENV):
@@ -82,15 +83,15 @@ changelog-verify: $(DEPENDENCIES)
 	# Yay
 
 .PHONY: changelog-verify changelog-add-fixed changelog-add-added changelog-add-changed
-changelog-add-fixed: $(DEPENDENCIES) changelog-verify
+changelog-add-fixed: $(DEPENDENCIES)
 	# Add a new "fixed" item to the changelog
 	@read -p "Describe the fix: " userstr; \
 	./venv/bin/kacl-cli add -m fixed "$$userstr"
-changelog-add-added: $(DEPENDENCIES) changelog-verify
+changelog-add-added: $(DEPENDENCIES)
 	# Add a new "added" item to the changelog
 	@read -p "Describe the fix: " userstr; \
 	./venv/bin/kacl-cli add -m added "$$userstr"
-changelog-add-changed: $(DEPENDENCIES) changelog-verify
+changelog-add-changed: $(DEPENDENCIES)
 	# Add a new "changed" item to the changelog
 	@read -p "Describe the fix: " userstr; \
 	./venv/bin/kacl-cli add -m changed "$$userstr"

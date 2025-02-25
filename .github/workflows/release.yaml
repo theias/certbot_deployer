@@ -1,0 +1,38 @@
+---
+name: Publish release
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Build package
+        run: make package
+      - name: Publish release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "release/*whl,release/*gz"
+          bodyFile: "release/CHANGELOG.md"
