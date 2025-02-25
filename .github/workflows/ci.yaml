@@ -1,5 +1,5 @@
 ---
-name: CI and Docs Deployment
+name: Test, Release, Docs
 
 on:  # yamllint disable-line rule:truthy
   push:

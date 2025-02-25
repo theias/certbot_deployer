@@ -6,7 +6,7 @@ STATIC_MYPY := venv/mypy.timestamp
 PYTHON_FILES := $(shell find . -path ./venv -prune -o -name '*.py' -print)
 PACKAGE := certbot_deployer
 VENV := venv/venv.timestamp
-VERSION := $(shell python3 -c 'import certbot_deployer; print(certbot_deployer.meta.__version__)')
+VERSION := $(shell python3 -c 'from certbot_deployer.meta import __version__; print(__version__)')
 BUILD_DIR := dist_$(VERSION)
 BUILD := $(BUILD_DIR)/.build.timestamp
 _WARN := "\033[33m[%s]\033[0m %s\n"  # Yellow text for "printf"
@@ -101,7 +101,7 @@ changelog-release: $(DEPENDENCIES)
 	./venv/bin/kacl-cli release -m "$(VERSION)"
 
 .PHONY: package
-package: changelog-verify $(BUILD) static-analysis test
+package: static-analysis test changelog-verify $(BUILD)
 
 $(BUILD): $(DEPENDENCIES)
 	# Build the package
@@ -110,10 +110,15 @@ $(BUILD): $(DEPENDENCIES)
 		exit 1; \
 		fi
 	mkdir --parents $(BUILD_DIR)
-	ln -s $(BUILD_DIR) release
+	ln -f -s $(BUILD_DIR) release
 	./venv/bin/python3 -m build --outdir $(BUILD_DIR)
 	./venv/bin/kacl-cli get "$(VERSION)" > $(BUILD_DIR)/CHANGELOG.md
 	touch $(BUILD)
+
+.PHONY: tag
+tag: changelog-verify static-analysis test
+	# Tag the latest commit with the current version
+	git tag -a -m "v$(VERSION)" "v$(VERSION)"
 
 .PHONY: publish
 publish: package
