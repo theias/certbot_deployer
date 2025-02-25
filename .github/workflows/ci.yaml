@@ -36,7 +36,7 @@ jobs:
         run: make all
 
   publish_docs_to_pages:
-    if: github.ref == 'refs/heads/main' && ${{ !startsWith(github.ref, 'refs/tags/') }}
+    if: github.ref == 'refs/heads/main' && ${{ !startsWith(github.ref, 'refs/tags/') }}  # yamllint disable-line rule:line-length
     needs: test
     environment:
       name: github-pages
