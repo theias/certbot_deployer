@@ -81,6 +81,25 @@ changelog-verify: $(DEPENDENCIES)
 	@if [ -z "$$(./venv/bin/kacl-cli current)" ] || [[ $(VERSION) == "$$(./venv/bin/kacl-cli current)" ]]; then true; else false; fi
 	# Yay
 
+.PHONY: changelog-verify changelog-add-fixed changelog-add-added changelog-add-changed
+changelog-add-fixed: $(DEPENDENCIES) changelog-verify
+	# Add a new "fixed" item to the changelog
+	@read -p "Describe the fix: " userstr; \
+	./venv/bin/kacl-cli add -m fixed "$$userstr"
+changelog-add-added: $(DEPENDENCIES) changelog-verify
+	# Add a new "added" item to the changelog
+	@read -p "Describe the fix: " userstr; \
+	./venv/bin/kacl-cli add -m added "$$userstr"
+changelog-add-changed: $(DEPENDENCIES) changelog-verify
+	# Add a new "changed" item to the changelog
+	@read -p "Describe the fix: " userstr; \
+	./venv/bin/kacl-cli add -m changed "$$userstr"
+
+.PHONY: changelog-release changelog-verify
+changelog-release: $(DEPENDENCIES)
+	# Create a new "release" in the changelog
+	./venv/bin/kacl-cli release -m "$(VERSION)"
+
 .PHONY: package
 package: changelog-verify $(BUILD) static-analysis test
 
