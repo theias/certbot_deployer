@@ -88,11 +88,11 @@ changelog-add-fixed: $(DEPENDENCIES)
 	./venv/bin/kacl-cli add -m fixed "$$userstr"
 changelog-add-added: $(DEPENDENCIES)
 	# Add a new "added" item to the changelog
-	@read -p "Describe the fix: " userstr; \
+	@read -p "Describe the addition: " userstr; \
 	./venv/bin/kacl-cli add -m added "$$userstr"
 changelog-add-changed: $(DEPENDENCIES)
 	# Add a new "changed" item to the changelog
-	@read -p "Describe the fix: " userstr; \
+	@read -p "Describe the change: " userstr; \
 	./venv/bin/kacl-cli add -m changed "$$userstr"
 
 .PHONY: changelog-release changelog-verify
