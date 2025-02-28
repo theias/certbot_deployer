@@ -2,7 +2,9 @@ certbot_deployer
 ===========
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/theias/certbot_deployer/refs/heads/main/docs/logo.png" />
+  <a href="#resources">
+      <img width="400" src="https://raw.githubusercontent.com/theias/certbot_deployer/refs/heads/main/docs/logo.png" />
+  </a>
 </p>
 
 
@@ -149,6 +151,15 @@ Please make sure to update tests along with any changes.
 # License
 
 License :: OSI Approved :: MIT License
+
+# Resources
+
+Logo sources:
+
+* [Wings by Lorc CC-BY-3.0](https://game-icons.net/1x1/lorc/feathered-wing.html)
+* [Robot by Delapouite CC-BY-3.0](https://game-icons.net/1x1/delapouite/mono-wheel-robot.html)
+* [Lock by Skoll CC-BY-3.0](https://game-icons.net/1x1/skoll/combination-lock.html)
+
 
 
 [Certbot Configuration File]: https://eff-certbot.readthedocs.io/en/stable/using.html#configuration-file
