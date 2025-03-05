@@ -10,8 +10,17 @@ import argparse
 import logging
 import os
 import sys
-from typing import List, Optional, Type
-from importlib.metadata import entry_points, EntryPoints
+from typing import cast
+from typing import Dict, List, Optional, Type, Tuple
+
+try:
+    # python>=3.10
+    from importlib.metadata import entry_points, EntryPoints
+except ImportError:
+    # python<3.10
+    # Use the pip backport of importlib.metadata because the stdlib version
+    # misbehaves and duplicates discovered entry points
+    from importlib_metadata import entry_points, EntryPoint  # type:ignore
 
 from certbot_deployer.deployer import (
     Deployer,
@@ -30,23 +39,31 @@ def load_deployer_plugins() -> List[Type[Deployer]]:
     Returns:
         List[Type[Deployer]]: A list of deployer plugin classes.
     """
-    plugins = []
-    entrypoints = entry_points()
+    plugins: List[Type[Deployer]] = []
 
-    # Python 3.10+ supports select() on the entry_points object.
-    deployer_entrypoints: EntryPoints
+    # python>=3.10 `entrypoints` returns an `EntryPoints` of `EntryPoint`
+    # objects, while earlier returns a dict of `EntryPoint` objects
     try:
-        deployer_entrypoints = entrypoints.select(group="certbot_deployer.plugins")
-    except AttributeError:
-        # For older versions of importlib.metadata, entrypoints is dict-like
-        deployer_entrypoints = entrypoints.get(
-            "certbot_deployer.plugins", EntryPoints([])
+        # python>=3.10
+        deployer_entrypoints: EntryPoints = entry_points(
+            group="certbot_deployer.plugins"
         )
+        # Load each plugin and append it to the plugins list.
+        for entry_point in deployer_entrypoints:
+            plugin_class = entry_point.load()
+            plugins.append(plugin_class)
+    except (TypeError, AttributeError):
+        # python<3.10
+        deployer_entrypoints_pylt310: Tuple[
+            EntryPoint
+        ] = entry_points().get(  # type:ignore
+            "certbot_deployer.plugins", {}  # type:ignore
+        )
+        # Load each plugin and append it to the plugins list.
+        for _, entry_point in deployer_entrypoints_pylt310:  # type:ignore
+            plugin_class = entry_point.load()
+            plugins.append(plugin_class)
 
-    # Load each plugin and append it to the plugins list.
-    for entry_point in deployer_entrypoints:
-        plugin_class = entry_point.load()
-        plugins.append(plugin_class)
     return plugins
 
 

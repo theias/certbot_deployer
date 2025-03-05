@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## 0.1.2 - 2025-03-05
+### Fixed
+- Fix poor handling of differences in `importlib` in Python 3.9 re `entry_points`
+
 ## 0.1.1 - 2025-02-25
 ### Changed
 - bump patch
