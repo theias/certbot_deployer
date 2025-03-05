@@ -35,4 +35,4 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "release/*whl,release/*gz"
-          bodyFile: "release/CHANGELOG.md"
+          bodyFile: "release.meta/CHANGELOG.md"
