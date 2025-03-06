@@ -15,6 +15,10 @@ The `certbot_deployer` package supports two primary use cases:
 * Command-line usage: `certbot-deployer` is intended to be run as a deploy hook launched by Certbot in order to deploy the certificates to arbitrary endpoints e.g. appliances, external machines, etc.
 * Plugin development: the library interface is used to build custom deployment plugins
 
+# Official Certbot Deployer plugins
+
+* [Certbot Deployer BIG-IP]
+
 # Installation
 
 You can install with [pip]:
@@ -163,6 +167,7 @@ Logo sources:
 
 
 [Certbot Configuration File]: https://eff-certbot.readthedocs.io/en/stable/using.html#configuration-file
+[Certbot Deployer BIG-IP]: https://github.com/theias/certbot_deployer_bigip
 [Certbot Deployer plugin development technical reference]: https://theias.github.io/certbot_deployer/
 [Certbot User Guide]: https://eff-certbot.readthedocs.io/en/stable/using.html
 [Certbot]: https://certbot.eff.org/
