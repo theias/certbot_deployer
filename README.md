@@ -47,6 +47,30 @@ Certbot Deployer depends on plugins to actually do any work. Refer to the docume
 certbot-deployer  pluginname --pluginarg1 --pluginarg2
 ```
 
+## Configuration file
+
+It is possible to set default argument values for this tool and all plugins in a central configuration file. The following locations will be checked in order:
+
+* `${XDG_CONFIG_HOME}/certbot_deployer/certbot_deployer.conf`
+* `${HOME}/.config/certbot_deployer/certbot_deployer.conf`
+* `/etc/certbot_deployer/certbot_deployer.conf`
+
+The config file should look like the following:
+
+```json
+{
+  "pluginname": {
+    "string_option": "string_value",
+    "int_option": 999,
+    "option_that_takes_no_value" = true
+    "list_option": [
+      "listopt1",
+      "listopt2"
+    ]
+  }
+```
+
+
 ## As a Cerbot deploy hook
 
 See [Certbot User Guide] for detailed documentation on Certbot.

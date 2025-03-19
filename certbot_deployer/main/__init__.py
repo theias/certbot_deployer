@@ -7,11 +7,12 @@ It parses command-line arguments, dispatches to the appropriate deployer
 plugin based on the subcommand provided, and executes the deployment workflow.
 """
 import argparse
+import json
 import logging
 import os
 import sys
 from typing import cast
-from typing import Dict, List, Optional, Type, Tuple
+from typing import Any, Dict, List, Optional, Type, Tuple
 
 try:
     # python>=3.10
@@ -29,6 +30,9 @@ from certbot_deployer.deployer import (
 )
 
 from certbot_deployer.meta import __prog__
+
+ConfigDict = Dict[str, Dict[str, Any]]
+CONFIG_FILENAME: str = "certbot_deployer.conf"
 
 
 def load_deployer_plugins() -> List[Type[Deployer]]:
@@ -67,8 +71,58 @@ def load_deployer_plugins() -> List[Type[Deployer]]:
     return plugins
 
 
+def read_config(filepath: Optional[str] = None) -> ConfigDict:
+    """
+    Reads a configuration file from the specified path or discovers one from a
+    predefined set of reasonable paths.
+
+    If a filepath is provided, it attempts to read the configuration from that path.
+
+    If no filepath is provided, it searches for 'certbot_deployer.conf' in the
+    following locations:
+        1. The `XDG_CONFIG_HOME` directory (or `~/.config/certbot_deployer/` if unset).
+        2. `/etc`
+
+    Returns:
+        A dictionary containing the configuration data if a valid file is found and
+        successfully read. If no file is found or an error occurs, an empty dictionary
+        is returned.
+    """
+    config_filepath: str = ""
+    config: ConfigDict = {}
+    if filepath is not None:
+        config_filepath = filepath
+    else:
+        config_filename: str = "certbot_deployer.conf"
+        config_paths: List[str] = [
+            os.path.join(
+                os.getenv(
+                    "XDG_CONFIG_HOME",
+                    default=os.path.join(
+                        os.getenv("HOME", default=""), "certbot_deployer", ".config"
+                    ),
+                ),
+                "certbot_deployer",
+                config_filename,
+            ),
+            os.path.join(os.path.sep, "etc", config_filename),
+        ]
+        for config_path in config_paths:
+            if os.path.isfile(config_path):
+                config_filepath = config_path
+                break
+    try:
+        with open(config_filepath, "r", encoding="utf-8") as config_file:
+            config = json.loads(config_file.read())
+        return config
+    except FileNotFoundError:
+        return {}
+
+
 def parse_args(
-    argv: Optional[list] = None, deployers: Optional[List[Type[Deployer]]] = None
+    argv: Optional[list] = None,
+    deployers: Optional[List[Type[Deployer]]] = None,
+    config: Optional[ConfigDict] = None,
 ) -> argparse.Namespace:
     # pylint: disable=line-too-long
     """
@@ -82,6 +136,7 @@ def parse_args(
     Args:
         argv (Optional[list]): The list of command-line arguments. Defaults to an empty list (which triggers help output) if None.
         deployers (Optional[List[Type[Deployer]]]): A list of deployer plugin classes. Each plugin must define a unique `subcommand` and implement the required interface. If not provided, the framework may warn that no subcommands are available.
+        config (Optional[ConfigDict]): A dict with the values from a config file with the keys being subconfigs per plugin
 
     Returns:
         argparse.Namespace: The namespace containing the parsed arguments.
@@ -110,6 +165,7 @@ def parse_args(
         prog=__prog__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
+    config = config if config is not None else read_config()
 
     parser.add_argument(
         "--verbose",
@@ -143,11 +199,13 @@ def parse_args(
         subparser = subparsers.add_parser(deployer.subcommand)
         deployer.register_args(parser=subparser)
         subparser.set_defaults(entrypoint=deployer.entrypoint)
+        subparser.set_defaults(**config.get(deployer.subcommand, {}))
 
     if not argv:
         parser.print_help()
         sys.exit(1)
 
+    parser.set_defaults(**config.get("main", {}))
     args = parser.parse_args(argv) if argv else parser.parse_args([])
 
     if not args.renewed_lineage:
