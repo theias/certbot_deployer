@@ -62,7 +62,7 @@ The config file should look like the following:
   "pluginname": {
     "string_option": "string_value",
     "int_option": 999,
-    "option_that_takes_no_value" = true
+    "option_that_takes_no_value": true
     "list_option": [
       "listopt1",
       "listopt2"
