@@ -345,6 +345,12 @@ class Deployer:
                 )
             ```
 
+        Note that any arguments registered with `required=True` by your plugin
+        will make that argument explicitly required on the command-line.
+
+        If you want such an argument come from the config file and still be
+        "required", you may verify its presence in your `argparse_post`
+
         Args:
             parser (argparse.ArgumentParser): The subparser for this deployer plugin.
         """
