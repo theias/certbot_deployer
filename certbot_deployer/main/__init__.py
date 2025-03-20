@@ -112,9 +112,11 @@ def read_config(filepath: Optional[str] = None) -> ConfigDict:
             if os.path.isfile(config_path):
                 config_filepath = config_path
                 break
+    logging.info("Opening configuration file `%s`", config_filepath)
     try:
         with open(config_filepath, "r", encoding="utf-8") as config_file:
             config = json.loads(config_file.read())
+        logging.debug("Configuration read from file: `%s`", config)
         return config
     except FileNotFoundError:
         return {}
