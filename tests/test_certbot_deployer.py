@@ -34,6 +34,7 @@ def fixture_config_dict() -> ConfigDict:
     Return a ConfigDict with some config
     """
     test_config: Dict[str, Any] = {}
+    test_config["main"] = {"verbosity": 1}
     test_config["dummy"] = {
         "dummy_arg_str": "bar",
         "dummy_arg_int": 11,
@@ -99,7 +100,7 @@ class DummyDeployer(Deployer):
         args.entrypoint_called = True
 
 
-def test_parse_args_without_config_file(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_parse_args_without_config(monkeypatch: pytest.MonkeyPatch) -> None:
     """
     Verify that:
 
@@ -108,9 +109,15 @@ def test_parse_args_without_config_file(monkeypatch: pytest.MonkeyPatch) -> None
     * verbosity is set as requested
     """
 
-    argv: List[str] = ["-vv", "dummy", "--dummy-arg-str", "foo"]
+    # pylint: disable-next=unused-argument
+    def fake_open(file: str, *args: Any, **kwargs: Any) -> TextIO:
+        assert False, "`parse_args` should not be opening any files in this context"
+
+    monkeypatch.setattr(builtins, "open", fake_open)
+
+    argv: List[str] = ["dummy", "--dummy-arg-str", "foo"]
     monkeypatch.setenv("RENEWED_LINEAGE", "/path/to/nowhere")
-    args = parse_args(argv=argv, deployers=[DummyDeployer])
+    args = parse_args(argv=argv, deployers=[DummyDeployer], config={})
 
     # Verify that the subcommand and custom arguments are set.
     assert args.subcommand == "dummy"
@@ -118,29 +125,35 @@ def test_parse_args_without_config_file(monkeypatch: pytest.MonkeyPatch) -> None
     # The deployer’s argparse_post should have set this attribute.
     assert args.dummy_post
     # A valid entrypoint should be set by the dummy deployer.
-    assert callable(args.entrypoint)
-    # Note that we are inspecting the number of times `-v` was passed, and not
-    # the actual log level configured in `logging`. Good enough
-    assert args.verbosity == 2
+    # pylint: disable-next=comparison-with-callable
+    assert args.entrypoint == DummyDeployer.entrypoint
+    assert args.verbosity == 0
 
 
-def test_parse_args_with_configfile(
+def test_parse_args_with_config(
     monkeypatch: pytest.MonkeyPatch, config_file: Tuple[Path, ConfigDict]
 ) -> None:
     """
-    Verify that args get their values from the config file when it is present
-    and that they are overridden by CLI args where appropriate
+    Verify that args get their values from the config when it is present and
+    that they are overridden by CLI args where appropriate
     """
     config_filepath: Path
     config_filepath, _ = config_file
     config = read_config(filepath=str(config_filepath))
 
+    # pylint: disable-next=unused-argument
+    def fake_open(file: str, *args: Any, **kwargs: Any) -> TextIO:
+        assert False, "`parse_args` should not be opening any files in this context"
+
+    monkeypatch.setattr(builtins, "open", fake_open)
+
     argv: List[str]
     monkeypatch.setenv("RENEWED_LINEAGE", "/path/to/nowhere")
 
     # Verify that config file gets used for args where provided
-    argv = ["-vv", "dummy"]
+    argv = ["dummy"]
     args = parse_args(argv=argv, deployers=[DummyDeployer], config=config)
+    assert args.verbosity == 1
     assert args.dummy_arg_str == "bar"
     assert args.dummy_arg_bool is False
     assert args.dummy_arg_int == 11
@@ -148,7 +161,7 @@ def test_parse_args_with_configfile(
 
     # Verify that cli values override any set in config file
     argv = [
-        "-vv",
+        "-v",
         "dummy",
         "--dummy-arg-str",
         "foo",
@@ -160,6 +173,7 @@ def test_parse_args_with_configfile(
         "newvalue2",
     ]
     args = parse_args(argv=argv, deployers=[DummyDeployer], config=config)
+    assert args.verbosity == 2  # For `action='count'`, values ar addative
     assert args.dummy_arg_str == "foo"
     assert args.dummy_arg_bool is True
     assert args.dummy_arg_int == 99

@@ -99,7 +99,8 @@ def read_config(filepath: Optional[str] = None) -> ConfigDict:
                 os.getenv(
                     "XDG_CONFIG_HOME",
                     default=os.path.join(
-                        os.getenv("HOME", default=""), "certbot_deployer", ".config"
+                        os.getenv("HOME", default=""),
+                        ".config",
                     ),
                 ),
                 "certbot_deployer",
