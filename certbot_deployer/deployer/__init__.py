@@ -17,6 +17,7 @@ from certbot_deploy.deployer import Deployer
 
 class ExampleDeployer(Deployer):
     subcommand: ClassVar[str] = "example"
+    version: ClassVar[str] = "v0.0.0"
 
     @staticmethod
     def register_args(*, parser: argparse.ArgumentParser) -> None:
@@ -289,6 +290,7 @@ class Deployer:
     Each deployer plugin must define:
 
       - A class attribute `subcommand` used to identify the plugin.
+      - A class attribute `version` specifying the current plugin version
       - The static method `register_args(*, parser: argparse.ArgumentParser)` to add subcommand-specific arguments.
       - The static method `entrypoint(*, args: argparse.Namespace)` that
         defines the main execution logic.
@@ -300,6 +302,7 @@ class Deployer:
         ```
         class MyDeployer(Deployer):
             subcommand: ClassVar[str] = "mysubcommand"
+            version: ClassVar[str] = "v0.0.0"
 
             @staticmethod
             def register_args(*, parser: argparse.ArgumentParser) -> None:
@@ -319,6 +322,7 @@ class Deployer:
     # pylint: enable=line-too-long
 
     subcommand: ClassVar[str]
+    version: ClassVar[str]
 
     @staticmethod
     @abstractmethod

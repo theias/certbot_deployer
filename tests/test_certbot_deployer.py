@@ -35,7 +35,7 @@ def fixture_config_dict() -> ConfigDict:
     Return a ConfigDict with some config
     """
     test_config: Dict[str, Any] = {}
-    test_config["main"] = {"verbosity": 1}
+    test_config["certbot_deployer"] = {"verbosity": 1}
     test_config["dummy"] = {
         "dummy_arg_str": "bar",
         "dummy_arg_int": 11,
@@ -67,6 +67,7 @@ def fixture_config_file(
 # pylint: disable=missing-class-docstring
 class DummyDeployer(Deployer):
     subcommand: ClassVar[str] = "dummy"
+    version: ClassVar[str] = "v0.0.0"
 
     @staticmethod
     def register_args(*, parser: argparse.ArgumentParser) -> None:
@@ -265,6 +266,21 @@ def test_read_config(
     else:
         assert not resulting_config
         assert open_count == 0
+
+
+def test_version(capsys: Any) -> None:
+    """
+    Verify correct output when `--version` is passed
+    """
+    expected_version_obj = {
+        "certbot_deployer": __version__,
+        DummyDeployer.subcommand: DummyDeployer.version,
+    }
+    with pytest.raises(SystemExit) as sysexit:
+        parse_args(argv=["--version"], deployers=[DummyDeployer])
+        assert sysexit.value.code == 0
+    stdout, _ = capsys.readouterr()
+    assert json.loads(stdout) == expected_version_obj
 
 
 def test_plugin_conflict() -> None:

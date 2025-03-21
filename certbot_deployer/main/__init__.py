@@ -128,7 +128,6 @@ def parse_args(
     deployers: Optional[List[Type[Deployer]]] = None,
     config: Optional[ConfigDict] = None,
 ) -> argparse.Namespace:
-    # pylint: disable=line-too-long
     """
     Parse command-line arguments and set up deployer subcommands.
 
@@ -138,9 +137,14 @@ def parse_args(
     flag.
 
     Args:
-        argv (Optional[list]): The list of command-line arguments. Defaults to an empty list (which triggers help output) if None.
-        deployers (Optional[List[Type[Deployer]]]): A list of deployer plugin classes. Each plugin must define a unique `subcommand` and implement the required interface. If not provided, the framework may warn that no subcommands are available.
-        config (Optional[ConfigDict]): A dict with the values from a config file with the keys being subconfigs per plugin
+        argv (Optional[list]): The list of command-line arguments. Defaults to
+            an empty list (which triggers help output) if None.
+        deployers (Optional[List[Type[Deployer]]]): A list of deployer plugin
+            classes. Each plugin must define a `version, a unique `subcommand` and
+            implement the required interface. If not provided, the framework may
+            warn that no subcommands are available.
+        config (Optional[ConfigDict]): A dict with the values from a config
+            file with the keys being subconfigs per plugin
 
     Returns:
         argparse.Namespace: The namespace containing the parsed arguments.
@@ -149,9 +153,9 @@ def parse_args(
         DeployerPluginConflict: If two or more deployer plugins share the same subcommand.
         SystemExit: If no command-line arguments are provided (help is printed and execution exits).
     """
-    # pylint: enable=line-too-long
     argv = [] if argv is None else argv
     deployers = [] if deployers is None else deployers
+    versions: Dict[str, str] = {}
 
     epilog: str
     if not deployers:
@@ -170,6 +174,13 @@ def parse_args(
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     config = config if config is not None else read_config()
+
+    parser.add_argument(
+        "--version",
+        "-V",
+        action="store_true",
+        help="Print current software version of Certbot Deployer and any plugins",
+    )
 
     parser.add_argument(
         "--verbose",
@@ -204,6 +215,7 @@ def parse_args(
         deployer.register_args(parser=subparser)
         subparser.set_defaults(entrypoint=deployer.entrypoint)
         subparser.set_defaults(**config.get(deployer.subcommand, {}))
+        versions[deployer.subcommand] = deployer.version if deployer.version else ""
 
     if not argv:
         parser.print_help()
@@ -211,6 +223,11 @@ def parse_args(
 
     parser.set_defaults(**config.get(__title__, {}))
     args = parser.parse_args(argv) if argv else parser.parse_args([])
+
+    if args.version:
+        versions[__title__] = __version__
+        print(json.dumps(versions, indent=2))
+        sys.exit(0)
 
     if not args.renewed_lineage:
         raise argparse.ArgumentTypeError(
