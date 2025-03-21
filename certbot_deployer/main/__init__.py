@@ -29,7 +29,8 @@ from certbot_deployer.deployer import (
     DeployerPluginConflict,
 )
 
-from certbot_deployer.meta import __prog__
+
+from certbot_deployer.meta import __prog__, __title__, __version__
 
 ConfigDict = Dict[str, Dict[str, Any]]
 CONFIG_FILENAME: str = "certbot_deployer.conf"
@@ -103,7 +104,7 @@ def read_config(filepath: Optional[str] = None) -> ConfigDict:
                         ".config",
                     ),
                 ),
-                "certbot_deployer",
+                __title__,
                 config_filename,
             ),
             os.path.join(os.path.sep, "etc", config_filename),
@@ -208,7 +209,7 @@ def parse_args(
         parser.print_help()
         sys.exit(1)
 
-    parser.set_defaults(**config.get("main", {}))
+    parser.set_defaults(**config.get(__title__, {}))
     args = parser.parse_args(argv) if argv else parser.parse_args([])
 
     if not args.renewed_lineage:

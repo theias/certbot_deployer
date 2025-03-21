@@ -23,8 +23,9 @@ from certbot_deployer.main import (
     CONFIG_FILENAME,
 )
 from certbot_deployer import DeployerPluginConflict
-from certbot_deployer.deployer import Deployer, CertificateBundle
 from certbot_deployer.deployer import CERT_FILENAME
+from certbot_deployer.deployer import Deployer, CertificateBundle
+from certbot_deployer.meta import __prog__, __version__
 from .helpers import generate_self_signed_cert
 
 

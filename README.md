@@ -59,15 +59,22 @@ The config file should look like the following:
 
 ```json
 {
+  "certbot_deployer": {
+    "verbosity": 1
+  },
   "pluginname": {
     "string_option": "string_value",
     "int_option": 999,
-    "option_that_takes_no_value": true
+    "option_that_takes_no_value": true,
     "list_option": [
       "listopt1",
       "listopt2"
     ]
+  },
+  "pluginname2": {
+    "option": "value"
   }
+}
 ```
 
 
@@ -110,6 +117,7 @@ from certbot_deploy.deployer import Deployer
 
 class ExampleDeployer(Deployer):
     subcommand: ClassVar[str] = "example"
+    version: ClassVar[str] = "v0.0.0"
 
     @staticmethod
     def register_args(*, parser: argparse.ArgumentParser) -> None:
@@ -136,11 +144,15 @@ class ExampleDeployer(Deployer):
     def entrypoint(
         *, args: argparse.Namespace, certificate_bundle: CertificateBundle
     ) -> None:
+
         '''
         Execute the deployment process.
 
         This is where one would generally process/deploy certificates
         '''
+        # `certificate_bundle` should have everything you need to know about
+        # the certificate bundle components - their paths, filenames, and
+        # "labels" (the static values predetermined by Certbot itself)
         print("Executing deployment with message:", args.message)
 ```
 
