@@ -12,8 +12,11 @@ Here is a minimal example of a deployer which would work with this framework:
 
 ```
 import argparse
+
 from typing import ClassVar
-from certbot_deploy.deployer import Deployer
+
+from certbot_deployer.deployer import Deployer
+from certbot_deployer import main as framework_main
 
 class ExampleDeployer(Deployer):
     subcommand: ClassVar[str] = "example"
@@ -54,6 +57,14 @@ class ExampleDeployer(Deployer):
         # the certificate bundle components - their paths, filenames, and
         # "labels" (the static values predetermined by Certbot itself)
         print("Executing deployment with message:", args.message)
+
+
+def main() -> None:
+    new_argv = [ExampleDeployer.subcommand] + argv
+    framework_main(deployers=[ExampleDeployer], argv=new_argv)
+
+if __name__ == "__main__":
+    main()
 ```
 
 And with the following to include a `certbot_deployer.plugins` entry point in
