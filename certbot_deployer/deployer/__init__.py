@@ -92,6 +92,7 @@ import os
 import warnings
 
 from collections import namedtuple
+from pathlib import Path
 
 from abc import abstractmethod
 from typing import Any, Callable, ClassVar, Dict, Iterable, List, NamedTuple, Optional
@@ -147,6 +148,7 @@ class CertificateComponent:
     or transferred independently.
 
     Attributes:
+        contents (str): The contents of the file
         label (str): A human-readable label for the component, one of `["cert", "privkey", "fullchain", "intermediates"]`
         path (str): The path to the component file on the local filesystem.
         filename (str): The name of the component's file on the local filesystem
@@ -154,9 +156,14 @@ class CertificateComponent:
     # pylint: enable=line-too-long
 
     def __init__(self, path: str, filename: str, label: str) -> None:
-        self.path = path
-        self.filename = filename
-        self.label = label
+        self.path: str = path
+        self.filename: str = filename
+        self.label: str = label
+        try:
+            with open(path, "r", encoding="utf-8") as fh:
+                self.contents: str = fh.read()
+        except FileNotFoundError as err:
+            raise RuntimeError(f"Unable to find `{path}`") from err
 
 
 # pylint: disable-next=too-many-instance-attributes
@@ -177,6 +184,7 @@ class CertificateBundle:
     extract metadata such as the "Not After" date and common name.
 
     Attributes:
+        `path` (str): The path to the certificate directory on disk
         `cert` (CertificateComponent): The primary certificate component.
         `intermediates` (CertificateComponent): The intermediate certificates component.
         `key` (CertificateComponent): The private key component.
@@ -189,7 +197,9 @@ class CertificateBundle:
     """
     # pylint: enable=line-too-long
 
-    def __init__(self, *, path: str) -> None:
+    def __init__(
+        self, *, path: Optional[str] = None, path_obj: Optional[Path] = None
+    ) -> None:
         """
         Initialize a CertificateBundle from a given directory.
 
@@ -203,22 +213,31 @@ class CertificateBundle:
         Raises:
             RuntimeError: If the primary certificate file (`cert.pem`) cannot be found.
         """
-        self.path: str = path
+        self.path: str
+        if path is not None:
+            self.path = path
+        elif path_obj is not None:
+            self.path = str(path_obj)
+        else:
+            raise ValueError("Either `path` or `path_obj` are required")
+        self.path_obj: Optional[Path] = path_obj
         self.cert: CertificateComponent = CertificateComponent(
-            label=CERT, filename=CERT_FILENAME, path=os.path.join(path, CERT_FILENAME)
+            label=CERT,
+            filename=CERT_FILENAME,
+            path=os.path.join(self.path, CERT_FILENAME),
         )
         self.intermediates: CertificateComponent = CertificateComponent(
             label=INTERMEDIATES,
             filename=INTERMEDIATES_FILENAME,
-            path=os.path.join(path, INTERMEDIATES_FILENAME),
+            path=os.path.join(self.path, INTERMEDIATES_FILENAME),
         )
         self.key: CertificateComponent = CertificateComponent(
-            label=KEY, filename=KEY_FILENAME, path=os.path.join(path, KEY_FILENAME)
+            label=KEY, filename=KEY_FILENAME, path=os.path.join(self.path, KEY_FILENAME)
         )
         self.fullchain: CertificateComponent = CertificateComponent(
             label=FULLCHAIN,
             filename=FULLCHAIN_FILENAME,
-            path=os.path.join(path, FULLCHAIN_FILENAME),
+            path=os.path.join(self.path, FULLCHAIN_FILENAME),
         )
         self.components: Dict[str, CertificateComponent] = {
             CERT: self.cert,
@@ -226,16 +245,9 @@ class CertificateBundle:
             FULLCHAIN: self.fullchain,
             KEY: self.key,
         }
-        try:
-            logging.debug("Reading data from cert file `%s`...", path)
-            with open(
-                os.path.join(path, CERT_FILENAME), "r", encoding="utf-8"
-            ) as certfile:
-                self.certdata: x509.Certificate = x509.load_pem_x509_certificate(
-                    str.encode(certfile.read())
-                )
-        except FileNotFoundError as err:
-            raise RuntimeError(f"Unable to find `{CERT_FILENAME}`") from err
+        self.certdata: x509.Certificate = x509.load_pem_x509_certificate(
+            str.encode(self.cert.contents)
+        )
         self.expires: str = self.certdata.not_valid_after_utc.strftime(
             "%Y-%m-%dT%H:%M:%S"
         )

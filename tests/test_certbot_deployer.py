@@ -9,8 +9,6 @@ import os
 
 from pathlib import Path
 
-from datetime import datetime
-
 from typing import Any, ClassVar, List, Dict, TextIO, Tuple
 
 import pytest
@@ -23,10 +21,11 @@ from certbot_deployer.main import (
     CONFIG_FILENAME,
 )
 from certbot_deployer import DeployerPluginConflict
-from certbot_deployer.deployer import CERT_FILENAME
 from certbot_deployer.deployer import Deployer, CertificateBundle
 from certbot_deployer.meta import __prog__, __version__
-from .helpers import generate_self_signed_cert
+
+# pylint: disable-next=unused-import
+from .helpers import fixture_self_signed_certificate_bundle
 
 
 @pytest.fixture(name="config_dict", scope="function")
@@ -302,7 +301,9 @@ def test_exit_no_arguments() -> None:
     assert exc.value.code == 1
 
 
-def test_main_delegates(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_main_delegates(
+    monkeypatch: pytest.MonkeyPatch, self_signed_certificate_bundle: CertificateBundle
+) -> None:
     """
     Test that main() correctly delegates to the deployer plugin's entrypoint.
     To do this, we override the deployers in `main` with our dummy
@@ -326,16 +327,7 @@ def test_main_delegates(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None
     monkeypatch.setattr(DummyDeployer, "entrypoint", mock_entrypoint)
 
     # Create a self-signed certificate with fixed validity dates.
-    common_name: str = "Test Common Name"
-    not_valid_before: datetime = datetime(2020, 1, 1)
-    not_valid_after: datetime = datetime(2099, 1, 1)
-    cert_pem: str = generate_self_signed_cert(
-        common_name, not_valid_before, not_valid_after
-    )
-    cert_file: Path = tmp_path / CERT_FILENAME
-    cert_file.write_text(cert_pem, encoding="utf-8")
-    # IRL this is always provided by Certbot, but for testing...
-    monkeypatch.setenv("RENEWED_LINEAGE", str(tmp_path))
+    monkeypatch.setenv("RENEWED_LINEAGE", str(self_signed_certificate_bundle.path))
 
     argv: List[str] = ["-v", "dummy", "--dummy-arg-str", "bar"]
     main(argv=argv, deployers=[DummyDeployer])
