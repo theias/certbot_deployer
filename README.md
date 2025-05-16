@@ -186,6 +186,16 @@ Executing deployment with message: Hello, World!
 
 See also: [Certbot Deployer plugin development technical reference]
 
+## Testing
+
+The `certbot_deployer` package ships with a `testing` feature which includes downstream dependencies for the included pytest fixtures to assist in plugin testing.
+
+To install required dependencies (pytest) to use testing fixtures:
+
+```sh
+python3 -m pip install certbot_deployer[testing]
+```
+
 # Contributing
 
 Merge requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
