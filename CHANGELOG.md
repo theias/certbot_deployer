@@ -4,11 +4,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 2.0.0 - 2025-05-16
+### Added
+- Add `__eq__` to `CertificateComponent` to compare against other of the same class
+- Update `CertificateBundle` take the live path as str OR pathlib.Path, and persist the Path object as an attribute
+
+### Fixed
+- Modify use of pydoc to actually read the Google-style docstrings correctly
+
+### Changed
+- Move testing helpers from `certbot_deployer.test_helpers` to `certbot_deployer.testing`
+- Rework the "self signed cert" helper function to a pytest fixture that creates an entire, actually valid, certificate bundle
+
+## 1.1.0 - 2025-05-13
 ### Changed
 - Remove `wheel` from `build-system.requires`
 
 ### Fixed
 - Fix/update minimal Deployer example in docs
+
+### Added
+- Update `CertificateComponent` with new attr `contents` that hold the text for that cert/key file
 
 ## 1.0.0 - 2025-03-21
 ### Changed

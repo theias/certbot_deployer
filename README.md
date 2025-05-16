@@ -13,7 +13,7 @@ Certbot Deployer is a pluggable deploy hook framework for [Certbot] that streaml
 The `certbot_deployer` package supports two primary use cases:
 
 * Command-line usage: `certbot-deployer` is intended to be run as a deploy hook launched by Certbot in order to deploy the certificates to arbitrary endpoints e.g. appliances, external machines, etc.
-* Plugin development: the library interface is used to build custom deployment plugins
+* Plugin development: the library's API is used to build custom deployment plugins
 
 # Official Certbot Deployer plugins
 
@@ -78,7 +78,7 @@ The config file should look like the following:
 ```
 
 
-## As a Cerbot deploy hook
+## As a Certbot deploy hook
 
 See [Certbot User Guide] for detailed documentation on Certbot.
 
@@ -100,7 +100,7 @@ Certbot can also be configured to run specific hook commands on specific certifi
 
 # Plugin development
 
-(For reference: [Certbot Deployer plugin development technical reference])
+(For reference: [Certbot Deployer plugin API reference])
 
 Certbot Deployer is a framework that delegates certificate deployment tasks to deployer plugins - it effectively does nothing without any plugins.
 
@@ -184,7 +184,7 @@ $ certbot_deployer example --message "Hello, World!"
 Executing deployment with message: Hello, World!
 ```
 
-See also: [Certbot Deployer plugin development technical reference]
+See full developer documentation: [Certbot Deployer plugin API reference]
 
 ## Testing
 
@@ -195,6 +195,8 @@ To install required dependencies (pytest) to use testing fixtures:
 ```sh
 python3 -m pip install certbot_deployer[testing]
 ```
+
+See [Certbot Deployer plugin development/testing] for more.
 
 # Contributing
 
@@ -225,7 +227,8 @@ Logo sources:
 
 [Certbot Configuration File]: https://eff-certbot.readthedocs.io/en/stable/using.html#configuration-file
 [Certbot Deployer BIG-IP]: https://github.com/theias/certbot_deployer_bigip
-[Certbot Deployer plugin development technical reference]: https://theias.github.io/certbot_deployer/
+[Certbot Deployer plugin API reference]: https://theias.github.io/certbot_deployer/
+[Certbot Deployer plugin API reference/testing]: https://theias.github.io/certbot_deployer/test/testing
 [Certbot User Guide]: https://eff-certbot.readthedocs.io/en/stable/using.html
 [Certbot]: https://certbot.eff.org/
 [pip]: https://pip.pypa.io/en/stable/

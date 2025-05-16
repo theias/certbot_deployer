@@ -24,8 +24,8 @@ from certbot_deployer import DeployerPluginConflict
 from certbot_deployer.deployer import Deployer, CertificateBundle
 from certbot_deployer.meta import __prog__, __version__
 
-# pylint: disable-next=unused-import
-from .helpers import fixture_self_signed_certificate_bundle
+# pylint: disable-next=unused-import # not actually unused, just difft name from pytest
+from .testing import fixture_self_signed_certificate_bundle
 
 
 @pytest.fixture(name="config_dict", scope="function")
@@ -302,7 +302,8 @@ def test_exit_no_arguments() -> None:
 
 
 def test_main_delegates(
-    monkeypatch: pytest.MonkeyPatch, self_signed_certificate_bundle: CertificateBundle
+    monkeypatch: pytest.MonkeyPatch,
+    certbot_deployer_self_signed_certificate_bundle: CertificateBundle,
 ) -> None:
     """
     Test that main() correctly delegates to the deployer plugin's entrypoint.
@@ -327,7 +328,9 @@ def test_main_delegates(
     monkeypatch.setattr(DummyDeployer, "entrypoint", mock_entrypoint)
 
     # Create a self-signed certificate with fixed validity dates.
-    monkeypatch.setenv("RENEWED_LINEAGE", str(self_signed_certificate_bundle.path))
+    monkeypatch.setenv(
+        "RENEWED_LINEAGE", str(certbot_deployer_self_signed_certificate_bundle.path)
+    )
 
     argv: List[str] = ["-v", "dummy", "--dummy-arg-str", "bar"]
     main(argv=argv, deployers=[DummyDeployer])

@@ -1,12 +1,14 @@
 """
-Base classes for the certbot deploy hook framework.
+Base classes for the Certbot deploy hook framework.
 
 This module provides the core types used by the framework:
-  - CertificateBundle: Represents the collection of certificate files produced by Certbot,
-    along with metadata extracted from the main certificate.
-  - Deployer: An abstract base class for deployer plugins. Plugin developers should subclass
-    Deployer and implement its abstract methods to register their subcommand-specific
-    arguments and handle deployment tasks.
+  - `certbot_deployer.deployer.CertificateBundle`: Represents the collection of
+    certificate files produced by Certbot, along with metadata extracted from
+    the main certificate.
+  - `certbot_deployer.deployer.Deployer`: An abstract base class for deployer
+    plugins. Plugin developers should subclass
+    `certbot_deployer.deployer.Deployer` and implement its abstract methods to
+    register their subcommand-specific arguments and handle deployment tasks.
 
 Here is a minimal example of a deployer which would work with this framework:
 
@@ -67,8 +69,7 @@ if __name__ == "__main__":
     main()
 ```
 
-And with the following to include a `certbot_deployer.plugins` entry point in
-your plugin's `setup.cfg`:
+And with the following, include the required entry point in your plugin's `setup.cfg`:
 
 ```
 [options.entry_points]
@@ -77,8 +78,8 @@ certbot_deployer.plugins =
 
 ```
 
-The plugin can be installed into the same environment as this tool, and the new
-deployer can be called as follows:
+The plugin can be installed into an environment alongside this tool, and your
+new deployer can be called as follows:
 
 ```
 $ certbot_deployer example --message "Hello, World!"
@@ -142,10 +143,12 @@ class CertificateComponent:
     """
     Represents a single component of a certificate bundle.
 
-    A `CertificateComponent` is an abstraction for individual parts of a certificate
+    A `certbot_deployer.deployer.CertificateComponent` is an abstraction for individual parts of a certificate
     bundle, such as the certificate, private key, or certificate chain. Each component
     is associated with a specific file path and metadata, allowing it to be processed
     or transferred independently.
+
+    The corresponding file under `path` is read at initialization.
 
     Attributes:
         contents (str): The contents of the file
@@ -164,6 +167,15 @@ class CertificateComponent:
                 self.contents: str = fh.read()
         except FileNotFoundError as err:
             raise RuntimeError(f"Unable to find `{path}`") from err
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, CertificateComponent):
+            return NotImplemented
+        return (
+            (self.path == other.path)
+            and (self.filename == other.filename)
+            and (self.label == other.label)
+        )
 
 
 # pylint: disable-next=too-many-instance-attributes
@@ -185,15 +197,24 @@ class CertificateBundle:
 
     Attributes:
         `path` (str): The path to the certificate directory on disk
-        `cert` (CertificateComponent): The primary certificate component.
-        `intermediates` (CertificateComponent): The intermediate certificates component.
-        `key` (CertificateComponent): The private key component.
-        `fullchain` (CertificateComponent): The full certificate chain component.
-        `components` (Dict[str, CertificateComponent]): Dictionary mapping component labels to their corresponding CertificateComponent.
-        `certdata` (x509.Certificate): The parsed x509 certificate from the cert file.
-        `expires` (str): The expiration date (Not After) of the certificate in ISO8601 format with seconds precision
-        `common_name` (str): The common name extracted from the certificate (falls back
-            to a subject alternative name if not present).
+        `cert` (`CertificateComponent`): The primary
+            certificate component.
+        `intermediates` (`CertificateComponent`): The
+            intermediate certificates component.
+        `key` (`certbot_deployer.deployer.CertificateComponent`): The private
+            key component.
+        `fullchain` (`CertificateComponent`): The
+            full certificate chain component.
+        `components` (Dict[str,
+        `CertificateComponent`]): Dictionary mapping
+            component labels to their corresponding
+            `certbot_deployer.deployer.CertificateComponent`.
+        `certdata` (x509.Certificate): The parsed x509 certificate from the
+            cert file.
+        `expires` (str): The expiration date (Not After) of the certificate in
+            ISO8601 format with seconds precision
+        `common_name` (str): The common name extracted from the certificate
+            (falls back to the first subject alternative name if not present).
     """
     # pylint: enable=line-too-long
 
@@ -201,26 +222,35 @@ class CertificateBundle:
         self, *, path: Optional[str] = None, path_obj: Optional[Path] = None
     ) -> None:
         """
-        Initialize a CertificateBundle from a given directory.
+        Initialize a CertificateBundle from a given Certbot "live" directory.
 
         Reads the certificate file `cert.pem` from the specified directory and
         makes available the bundle of certificate components based on the
         expected filenames.
 
         Args:
-            path (str): The directory path that contains the certificate files.
+            path (Optional[str]): The directory path (as a string) that
+                contains the certificate files. Mutually exclusive with `path_obj`.
+            path_obj (Optional[Path]): The directory path (as a `pathlib.Path`)
+                that contains the certificate files. Mutually exclusive with
+                `path`.
 
         Raises:
             RuntimeError: If the primary certificate file (`cert.pem`) cannot be found.
+            ValueError: If neither or both of `path` and `path_obj` are provided.
         """
         self.path: str
-        if path is not None:
+        self.path_obj: Path
+        if path is not None and path_obj is None:
             self.path = path
-        elif path_obj is not None:
+            self.path_obj = Path(path)
+        elif path_obj is not None and path is None:
             self.path = str(path_obj)
+            self.path_obj = path_obj
         else:
-            raise ValueError("Either `path` or `path_obj` are required")
-        self.path_obj: Optional[Path] = path_obj
+            raise ValueError(
+                "One of either `path` or `path_obj` are required and mutually exclusive"
+            )
         self.cert: CertificateComponent = CertificateComponent(
             label=CERT,
             filename=CERT_FILENAME,
@@ -261,22 +291,22 @@ class CertificateBundle:
             )
         except IndexError:
             # Else try to first sub alt name
-            self.common_name = str(
-                self.certdata.subject.get_attributes_for_oid(
+            san_extension: x509.Extension = (
+                self.certdata.extensions.get_extension_for_oid(
                     ExtensionOID.SUBJECT_ALTERNATIVE_NAME
-                )[0].value
+                )
             )
+            self.common_name = san_extension.value.get_values_for_type(x509.DNSName)[0]
         logging.debug("Live cert initialized as: `%s`", str(self))
 
     def keys(self) -> List[str]:
-        # pylint: disable=line-too-long
         """
         Get a list of certificate component labels.
 
             Returns:
-                List[str]: The labels of the certificate components (e.g., `["cert", "intermediates", "fullchain", "privkey"]`).
+                List[str]: The labels of the certificate components (e.g.,
+                `["cert", "intermediates", "fullchain", "privkey"]`).
         """
-        # pylint: enable=line-too-long
         return list(self.components.keys())
 
     def __getitem__(self, key: str) -> CertificateComponent:
@@ -303,7 +333,6 @@ class CertificateBundle:
 
 
 class Deployer:
-    # pylint: disable=line-too-long
     """
     Abstract base class for deployer plugins.
 
@@ -314,7 +343,8 @@ class Deployer:
 
       - A class attribute `subcommand` used to identify the plugin.
       - A class attribute `version` specifying the current plugin version
-      - The static method `register_args(*, parser: argparse.ArgumentParser)` to add subcommand-specific arguments.
+      - The static method `register_args(*, parser: argparse.ArgumentParser)`
+        to add subcommand-specific arguments.
       - The static method `entrypoint(*, args: argparse.Namespace)` that
         defines the main execution logic.
 
@@ -342,7 +372,6 @@ class Deployer:
     Optionally, plugins can override `argparse_post(*, args: argparse.Namespace)` for
     post-processing of parsed arguments.
     """
-    # pylint: enable=line-too-long
 
     subcommand: ClassVar[str]
     version: ClassVar[str]
@@ -375,8 +404,9 @@ class Deployer:
         Note that any arguments registered with `required=True` by your plugin
         will make that argument explicitly required on the command-line.
 
-        If you want such an argument come from the config file and still be
-        "required", you may verify its presence in your `argparse_post`
+        If you want such an argument to be able to come from the configuration
+        file *and* still be "required", you should instead just verify its
+        presence in your `argparse_post`
 
         Args:
             parser (argparse.ArgumentParser): The subparser for this deployer plugin.
@@ -412,7 +442,6 @@ class Deployer:
     def entrypoint(
         *, args: argparse.Namespace, certificate_bundle: CertificateBundle
     ) -> None:
-        # pylint: disable=line-too-long
         """
         Execute the deployment process.
 
@@ -426,11 +455,14 @@ class Deployer:
         or processing of the certificates as required by their specific use-case.
 
         Args:
-            args (argparse.Namespace): The namespace containing the parsed command-line arguments.
-            certificate_bundle (CertificateBundle): The certificate bundle, built from the directory specified by the environment variable (or argument) `RENEWED_LINEAGE`, containing the certificate, key, full chain, and intermediate certificates.
+            args (argparse.Namespace): The namespace containing the parsed
+                command-line arguments.
+            certificate_bundle (`CertificateBundle`): The certificate bundle,
+                built from the directory specified by the environment variable (or
+                argument) `RENEWED_LINEAGE`, containing the certificate, key, full
+                chain, and intermediate certificates.
 
         Returns:
         None
         """
-        # pylint: enable=line-too-long
         raise NotImplementedError
