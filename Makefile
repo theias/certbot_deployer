@@ -45,11 +45,11 @@ static-analysis: $(DEPENDENCIES) $(STATIC_PYLINT) $(STATIC_MYPY) $(STATIC_BLACK)
 
 .PHONY: docs
 docs: $(DEPENDENCIES)
-	./venv/bin/pdoc certbot_deployer/deployer/ tests/helpers/ --logo https://raw.githubusercontent.com/theias/certbot_deployer/refs/heads/main/docs/logo.png -t docs/pdoc_templates/ --output-directory docs_output/ --host theias.github.io
+	./venv/bin/pdoc certbot_deployer/deployer/ tests/testing/ --docformat google --logo https://raw.githubusercontent.com/theias/certbot_deployer/refs/heads/main/docs/logo.png -t docs/pdoc_templates/ --output-directory docs_output/ --host theias.github.io
 
 .PHONY: docs-serve
 docs-serve: $(DEPENDENCIES)
-	./venv/bin/pdoc certbot_deployer/deployer/ tests/helpers/ --logo https://raw.githubusercontent.com/theias/certbot_deployer/refs/heads/main/docs/logo.png -t docs/pdoc_templates/
+	./venv/bin/pdoc certbot_deployer/deployer/ tests/testing/ --docformat google --logo https://raw.githubusercontent.com/theias/certbot_deployer/refs/heads/main/docs/logo.png -t docs/pdoc_templates/
 
 .PHONY: test
 test: $(DEPENDENCIES)
