@@ -230,7 +230,7 @@ Logo sources:
 [Certbot Deployer BIG-IP]: https://github.com/theias/certbot_deployer_bigip
 [Certbot Deployer plugin API reference/testing]: https://theias.github.io/certbot_deployer/test/testing
 [Certbot Deployer plugin API reference]: https://theias.github.io/certbot_deployer/
-[Certbot Deployer vSphere]: https://github.com/theias/certbot_deployer_bigip
+[Certbot Deployer vSphere]: https://github.com/theias/certbot_deployer_vsphere
 [Certbot User Guide]: https://eff-certbot.readthedocs.io/en/stable/using.html
 [Certbot]: https://certbot.eff.org/
 [pip]: https://pip.pypa.io/en/stable/
