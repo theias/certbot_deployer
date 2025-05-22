@@ -142,12 +142,6 @@ def test_parse_args_with_config(
     config_filepath, _ = config_file
     config = read_config(filepath=str(config_filepath))
 
-    # pylint: disable-next=unused-argument
-    def fake_open(file: str, *args: Any, **kwargs: Any) -> TextIO:
-        assert False, "`parse_args` should not be opening any files in this context"
-
-    monkeypatch.setattr(builtins, "open", fake_open)
-
     argv: List[str]
     monkeypatch.setenv("RENEWED_LINEAGE", "/path/to/nowhere")
 

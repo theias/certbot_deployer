@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## 2.0.1 - 2025-05-22
+### Fixed
+- Fix incorrect intermediates filename
+
 ## 2.0.0 - 2025-05-16
 ### Added
 - Add `__eq__` to `CertificateComponent` to compare against other of the same class
