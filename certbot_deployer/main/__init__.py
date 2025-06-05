@@ -236,7 +236,9 @@ def parse_args(
         )
 
     for deployer in deployers:
-        deployer.argparse_post(args=args)
+        if deployer.subcommand == args.subcommand:
+            deployer.argparse_post(args=args)
+            break
 
     if args.verbosity >= 2:
         log_level = logging.DEBUG

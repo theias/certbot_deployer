@@ -285,6 +285,23 @@ def test_plugin_conflict() -> None:
         parse_args(argv=["conflict"], deployers=[DummyDeployer, DummyDeployer])
 
 
+def test_plugin_argparse_post_only_called(monkeypatch: pytest.MonkeyPatch) -> None:
+    """
+    Verify that only the subcommand that was called for runs `argparse_post`
+    """
+
+    class DummyDeployerAlt(DummyDeployer):
+        subcommand: ClassVar[str] = "dummy2"
+
+        @staticmethod
+        def argparse_post(*, args: argparse.Namespace) -> None:
+            if args.canary is not True:
+                raise argparse.ArgumentTypeError("This error should not come up")
+
+    monkeypatch.setenv("RENEWED_LINEAGE", "/path/to/nowhere")
+    parse_args(argv=["dummy"], deployers=[DummyDeployer, DummyDeployerAlt])
+
+
 def test_exit_no_arguments() -> None:
     """
     Verify that the main application errors out appropriately when no args are given
