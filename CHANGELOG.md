@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## 2.0.3 - 2025-07-11
+### Fixed
+- Bump cryptography version
+
 ## 2.0.2 - 2025-06-05
 ### Fixed
 - Make sure only the plugin that is called runs `argparse_post`
