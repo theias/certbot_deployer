@@ -126,12 +126,12 @@ tag: changelog-verify static-analysis test
 .PHONY: publish
 publish: package
 	@test $${TWINE_PASSWORD?Please set environment variable TWINE_PASSWORD in order to publish}
-	./venv/bin/python3 -m twine upload --username __token__ $(BUILD_DIR)/*
+	./venv/bin/python3 -m twine upload --username __token__ release/*
 
 .PHONY: publish-test
 publish-test: package
 	@test $${TWINE_PASSWORD?Please set environment variable TWINE_PASSWORD in order to publish}
-	./venv/bin/python3 -m twine upload --repository testpypi --username __token__ $(BUILD_DIR)/*
+	./venv/bin/python3 -m twine upload --repository testpypi --username __token__ release/*
 
 .PHONY: confirm-hooks
 confirm-hooks:
