@@ -93,10 +93,21 @@ import os
 import warnings
 
 from collections import namedtuple
+from collections.abc import ItemsView
 from pathlib import Path
 
 from abc import abstractmethod
-from typing import Any, Callable, ClassVar, Dict, Iterable, List, NamedTuple, Optional
+from typing import (
+    Any,
+    Callable,
+    ClassVar,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    NamedTuple,
+    Optional,
+)
 
 # pylint: disable-next=duplicate-code
 with warnings.catch_warnings():
@@ -303,11 +314,29 @@ class CertificateBundle:
         """
         Get a list of certificate component labels.
 
-            Returns:
-                List[str]: The labels of the certificate components (e.g.,
-                `["cert", "intermediates", "fullchain", "privkey"]`).
+        Returns:
+            List[str]: The labels of the certificate components (e.g.,
+            `["cert", "intermediates", "fullchain", "privkey"]`).
         """
         return list(self.components.keys())
+
+    def __iter__(self) -> Iterator:
+        """
+        Iterate over certificate component labels.
+
+        Returns:
+            Iterator[str]: Iterator over component labels.
+        """
+        return iter(self.components)
+
+    def items(self) -> ItemsView[str, CertificateComponent]:
+        """
+        Get an items view of components.
+
+        Returns:
+            ItemsView: View of (label, component) pairs.
+        """
+        return self.components.items()
 
     def __getitem__(self, key: str) -> CertificateComponent:
         """

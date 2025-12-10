@@ -61,7 +61,7 @@ def load_deployer_plugins() -> List[Type[Deployer]]:
         # python<3.10
         deployer_entrypoints_pylt310: Tuple[
             EntryPoint
-        ] = entry_points().get(  # type:ignore
+        ] = entry_points().get(  # type:ignore # pylint: disable=no-member
             "certbot_deployer.plugins", {}  # type:ignore
         )
         # Load each plugin and append it to the plugins list.
