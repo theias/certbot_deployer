@@ -1,8 +1,9 @@
-black>=25.1.0,<26.0.0
+black>=25.11.0,<26.0.0
 build
-mypy>=1.15.0,<2.0.0
+mypy>=1.19.0,<2.0.0
 pdoc>=15.0.1,<16.0.0
-pylint>=3.3.4,<4.0.0
-pytest>=8.3.4,<9.0.0
-python-kacl>=0.6.2,<1.0.0
+pylint>=4.0.4,<5.0.0
+pytest>=9.0.1,<10.0.0
+python-kacl>=0.6.8,<1.0.0
+setuptools
 twine
