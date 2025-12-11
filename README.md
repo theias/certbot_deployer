@@ -17,6 +17,7 @@ The `certbot_deployer` package supports two primary use cases:
 
 # Official Certbot Deployer plugins
 
+* [Certbot Deployer SSH]
 * [Certbot Deployer BIG-IP]
 * [Certbot Deployer vSphere]
 
@@ -228,6 +229,7 @@ Logo sources:
 
 [Certbot Configuration File]: https://eff-certbot.readthedocs.io/en/stable/using.html#configuration-file
 [Certbot Deployer BIG-IP]: https://github.com/theias/certbot_deployer_bigip
+[Certbot Deployer SSH]: https://github.com/theias/certbot_deployer_ssh
 [Certbot Deployer plugin API reference/testing]: https://theias.github.io/certbot_deployer/test/testing
 [Certbot Deployer plugin API reference]: https://theias.github.io/certbot_deployer/
 [Certbot Deployer vSphere]: https://github.com/theias/certbot_deployer_vsphere
