@@ -247,7 +247,7 @@ def parse_args(
     else:
         log_level = logging.WARNING
 
-    logging.basicConfig(level=log_level)
+    logging.basicConfig(level=log_level, force=True)
 
     return args
 
